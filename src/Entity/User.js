@@ -1,5 +1,5 @@
-class User {
-
+const IEntity = require('./IEntity');
+class User extends IEntity {
     constructor(
         _email = '',
         _password = '',
@@ -7,6 +7,7 @@ class User {
         _lastname = '',
         _birthdate = ''
     ) {
+        super();
         this._email = _email;
         this._password = _password;
         this._firstname = _firstname;
