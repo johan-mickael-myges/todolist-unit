@@ -42,14 +42,14 @@ module.exports = class Item extends IEntity {
     }
 
     checkName() {
-        if (!this._name) {
+        if (!this._name || !this._name.trim()) {
             throw new InvalidItemNameException();
         }
         return true;
     }
 
     checkContent() {
-        if (!this._content) {
+        if (!this._content || !this._content.trim()) {
             throw new InvalidItemContentException();
         }
 

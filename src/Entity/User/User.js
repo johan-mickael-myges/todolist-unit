@@ -95,7 +95,7 @@ class User extends IEntity {
     }
 
     checkFirstname() {
-        if (!this._firstname) {
+        if (!this._firstname || !this._firstname.trim()) {
             throw new InvalidUserFirstnameException('Firstname is required');
         }
 
@@ -103,7 +103,7 @@ class User extends IEntity {
     }
 
     checkLastname() {
-        if (!this._lastname) {
+        if (!this._lastname || !this._lastname.trim()) {
             throw new InvalidUserLastnameException('Lastname is required');
         }
 

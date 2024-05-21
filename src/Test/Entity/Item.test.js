@@ -15,6 +15,7 @@ describe('Item name validation', () => {
         test.each([
             [null],
             [''],
+            [' '],
         ])('Testing [%s]', (name) => {
             let item = new Item(name);
             expect(() => item.checkName()).toThrow(InvalidItemNameException);
@@ -37,6 +38,7 @@ describe('Item content validation', () => {
         test.each([
             [null],
             [''],
+            [' '],
         ])('Testing [%s]', (content) => {
             let item = new Item(null, content);
             expect(() => item.checkContent()).toThrow(InvalidItemContentException);

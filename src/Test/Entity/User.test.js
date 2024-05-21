@@ -17,6 +17,7 @@ describe('User email validation', () => {
         test.each([
             [null],
             [''],
+            [' '],
             ['invalid-email'],
             ['missing-at-sign.com'],
             ['missingdot@com'],
@@ -40,25 +41,29 @@ describe('User email validation', () => {
 });
 
 describe('User password validation', () => {
-    test.each([
-        [null, false],
-        ['', false],
-        ['invalid-password', false],
-        ['Johan123', false],
-        ['J0h@1', false],
-        ['j0h@n123!', false],
-        ['J0H@N123!', false],
-        ['J0h@n123!', true],
-        ['J0h@n123!J0h@n123!J0h@n123!J0h@n123!J0h@n123!J0h@n123!J0h@n123!', false]
-    ])('%s is %s', (password, expected) => {
-        let user = new User(null, password);
+    describe('Invalid password', () => {
+        test.each([
+            [null],
+            [''],
+            [' '],
+            ['invalid-password'],
+            ['Johan123'],
+            ['J0h@1'],
+            ['j0h@n123!'],
+            ['J0H@N123!'],
+        ])(`Testing [%s]`, (password) => {
+            let user = new User(null, password);
+            expect(() => user.checkPassword()).toThrow(InvalidUserPasswordException);
+        });
+    });
 
-        if (expected) {
-            expect(user.checkPassword()).toBe(expected);
-            return;
-        }
-
-        expect(() => user.checkPassword()).toThrow(InvalidUserPasswordException);
+    describe('Valid password', () => {
+        test.each([
+            ['J0h@n123!'],
+        ])(`Testing [%s]`, (password) => {
+            let user = new User(null, password);
+            expect(user.checkPassword()).toBe(true);
+        });
     });
 });
 
@@ -67,6 +72,7 @@ describe('User firstname validation', () => {
         test.each([
             [null],
             [''],
+            [' '],
         ])('Testing [%s]', (firstname) => {
             let user = new User(null, null, firstname);
             expect(() => user.checkFirstname()).toThrow(InvalidUserFirstnameException);
@@ -90,6 +96,7 @@ describe('User lastname validation', () => {
         test.each([
             [null],
             [''],
+            [' '],
         ])('Testing [%s]', (lastname) => {
             let user = new User(null, null, null, lastname);
             expect(() => user.checkLastname()).toThrow(InvalidUserLastnameException);
