@@ -1,4 +1,4 @@
-const IEntity = require('./IEntity');
+const IEntity = require('../IEntity');
 
 const InvalidUserException = require('./Exception/InvalidUserException');
 const InvalidUserEmailException = require('./Exception/InvalidUserEmailException');
