@@ -1,4 +1,11 @@
 const IEntity = require('./IEntity');
+
+const InvalidUserException = require('./Exception/InvalidUserException');
+const InvalidUserEmailException = require('./Exception/InvalidUserEmailException');
+const InvalidUserPasswordException = require('./Exception/InvalidUserPasswordException');
+const InvalidUserFirstnameException = require('./Exception/InvalidUserFirstnameException');
+const InvalidUserLastnameException = require('./Exception/InvalidUserLastnameException');
+
 class User extends IEntity {
     constructor(
         _email = '',
@@ -59,30 +66,46 @@ class User extends IEntity {
 
     checkEmail() {
         if (!this._email) {
-            return false;
+            throw new InvalidUserEmailException();
         }
 
-        return !!this._email.match(/^([\w.%+-]+)@([\w-]+\.)+([\w]{2,})$/i);
+        if (!this._email.match(/^([\w.%+-]+)@([\w-]+\.)+([\w]{2,})$/i)) {
+            throw new InvalidUserEmailException('Invalid email format');
+        }
+
+        return true;
     }
 
     checkPassword() {
         if (!this._password) {
-            return false;
+            throw new InvalidUserPasswordException('Password is required');
         }
 
         if (this._password.length < 8 || this._password.length > 40) {
-            return false;
+            throw new InvalidUserPasswordException('Password must be between 8 and 40 characters');
         }
 
-        return !!this._password.match(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/);
+        if (!this._password.match(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/)) {
+            throw new InvalidUserPasswordException('Password must contain at least one uppercase letter, one lowercase letter, one number and one special character');
+        }
+
+        return true;
     }
 
     checkFirstname() {
-        return !!this._firstname;
+        if (!this._firstname) {
+            throw new InvalidUserFirstnameException('Firstname is required');
+        }
+
+        return true;
     }
 
     checkLastname() {
-        return !!this._lastname;
+        if (!this._lastname) {
+            throw new InvalidUserLastnameException('Lastname is required');
+        }
+
+        return true;
     }
 
     checkBirthdate() {
@@ -94,11 +117,19 @@ class User extends IEntity {
     }
 
     isValid() {
-        return this.checkEmail()
-            && this.checkPassword()
-            && this.checkFirstname()
-            && this.checkLastname()
-            && this.checkBirthdate();
+        let isValid;
+
+        try {
+            isValid = this.checkEmail()
+                && this.checkPassword()
+                && this.checkFirstname()
+                && this.checkLastname()
+                && this.checkBirthdate();
+        } catch (error) {
+            isValid = false;
+        }
+
+        return isValid;
     }
 }
 
