@@ -9,9 +9,13 @@ const InvalidUserEmailException = require('../../Entity/Exception/InvalidUserEma
 const InvalidUserPasswordException = require('../../Entity/Exception/InvalidUserPasswordException');
 const InvalidUserFirstnameException = require('../../Entity/Exception/InvalidUserFirstnameException');
 const InvalidUserLastnameException = require('../../Entity/Exception/InvalidUserLastnameException');
+const InvalidUserBirthdateException = require('../../Entity/Exception/InvalidUserBirthdateException');
+const UserTooYoungException = require('../../Entity/Exception/UserTooYoungException');
 
 describe('User email validation', () => {
     test.each([
+        [null, false],
+        ['', false],
         ['invalid-email', false],
         ['missing-at-sign.com', false],
         ['missingdot@com', false],
@@ -20,8 +24,7 @@ describe('User email validation', () => {
         ['missing-tld@domain.', false],
         ['valid.email@domain.com', true],
     ])('%s is %s', (email, expected) => {
-        let user = new User();
-        user.email = email;
+        let user = new User(email);
 
         if (expected) {
             expect(user.checkEmail()).toBe(expected);
@@ -34,6 +37,7 @@ describe('User email validation', () => {
 
 describe('User password validation', () => {
     test.each([
+        [null, false],
         ['', false],
         ['invalid-password', false],
         ['Johan123', false],
@@ -43,8 +47,8 @@ describe('User password validation', () => {
         ['J0h@n123!', true],
         ['J0h@n123!J0h@n123!J0h@n123!J0h@n123!J0h@n123!J0h@n123!J0h@n123!', false]
     ])('%s is %s', (password, expected) => {
-        let user = new User();
-        user.password = password;
+        let user = new User(null, password);
+
         if (expected) {
             expect(user.checkPassword()).toBe(expected);
             return;
@@ -56,11 +60,12 @@ describe('User password validation', () => {
 
 describe('User firstname validation', () => {
     test.each([
+        [null, false],
         ['', false],
         [faker.person.firstName(), true],
     ])('%s is %s', (firstname, expected) => {
-        let user = new User();
-        user.firstname = firstname;
+        let user = new User(null, null, firstname);
+
         if (expected) {
             expect(user.checkFirstname()).toBe(expected);
             return;
@@ -73,11 +78,11 @@ describe('User firstname validation', () => {
 
 describe('User lastname validation', () => {
     test.each([
+        [null, false],
         ['', false],
         [faker.person.lastName(), true],
     ])('%s is %s', (lastname, expected) => {
-        let user = new User();
-        user.lastname = lastname;
+        let user = new User(null, null, null, lastname);
         if (expected) {
             expect(user.checkLastname()).toBe(expected);
             return;
@@ -90,15 +95,20 @@ describe('User lastname validation', () => {
 describe('User birthdate validation', () => {
     const now = new Date();
     test.each([
-        ['', false],
-        ['invalid-birthdate', false],
-        [now.setFullYear(now.getFullYear() - 6), false], // 6 yo
-        [now.setFullYear(now.getFullYear() - 24), true], // 24 yo
-        [now.setFullYear(now.getFullYear() - 13), true], // 13 yo
-    ])('%s is %s', (birthdate, expected) => {
-        let user = new User();
-        user.birthdate = birthdate;
-        expect(user.checkBirthdate()).toBe(expected);
+        ['', false, InvalidUserBirthdateException],
+        ['invalid-birthdate', false, InvalidUserBirthdateException],
+        [now.setFullYear(now.getFullYear() - 6), false, UserTooYoungException], // 6 yo
+        [now.setFullYear(now.getFullYear() - 24), true, null], // 24 yo
+        [now.setFullYear(now.getFullYear() - 13), true, null], // 13 yo
+    ])('%s is %s', (birthdate, expected, exception) => {
+        let user = new User(null, null, null, null, birthdate);
+
+        if (expected) {
+            expect(user.checkBirthdate()).toBe(expected);
+            return;
+        }
+
+        expect(() => user.checkBirthdate()).toThrow(exception);
     });
 });
 

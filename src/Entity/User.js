@@ -5,6 +5,8 @@ const InvalidUserEmailException = require('./Exception/InvalidUserEmailException
 const InvalidUserPasswordException = require('./Exception/InvalidUserPasswordException');
 const InvalidUserFirstnameException = require('./Exception/InvalidUserFirstnameException');
 const InvalidUserLastnameException = require('./Exception/InvalidUserLastnameException');
+const InvalidUserBirthdateException = require('./Exception/InvalidUserBirthdateException');
+const UserTooYoungException = require('./Exception/UserTooYoungException');
 
 class User extends IEntity {
     constructor(
@@ -110,10 +112,20 @@ class User extends IEntity {
 
     checkBirthdate() {
         let birthdate = new Date(this._birthdate);
+
+        if (birthdate.toString() === 'Invalid Date') {
+            throw new InvalidUserBirthdateException('Invalid birthdate');
+        }
+
         let now = new Date();
         let diff = now - birthdate;
         let age = Math.floor(diff / 31557600000); // 31557600000 = 1000ms * 60s * 60min * 24h * 365.25d
-        return age >= this.MIN_AGE;
+
+        if (age < this.MIN_AGE) {
+            throw new UserTooYoungException();
+        }
+
+        return true;
     }
 
     isValid() {
