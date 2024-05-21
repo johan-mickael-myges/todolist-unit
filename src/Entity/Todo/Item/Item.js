@@ -1,5 +1,11 @@
-const IEntity = require('../IEntity');
-class Item extends IEntity {
+const IEntity = require('../../IEntity');
+
+const InvalidItemNameException = require('./Exception/InvalidItemNameException');
+const InvalidItemContentException = require('./Exception/InvalidItemContentException');
+const ItemContentTooLongException = require('./Exception/ItemContentTooLongException');
+const InvalidItemCreatedException = require('./Exception/InvalidItemCreatedException');
+
+module.exports = class Item extends IEntity {
     constructor(
         _name = '',
         _content = '',
@@ -37,18 +43,18 @@ class Item extends IEntity {
 
     checkName() {
         if (!this._name) {
-            return false;
+            throw new InvalidItemNameException();
         }
         return true;
     }
 
     checkContent() {
         if (!this._content) {
-            return false;
+            throw new InvalidItemContentException();
         }
 
         if (this._content.length > 1000) {
-            return false;
+            throw new ItemContentTooLongException();
         }
 
         return true;
@@ -56,20 +62,26 @@ class Item extends IEntity {
 
     checkCreated() {
         if (!this._created) {
-            return false;
+            throw new InvalidItemCreatedException();
         }
 
         const date = new Date(this._created);
         if (date.toString() === 'Invalid Date') {
-            return false;
+            throw new InvalidItemCreatedException();
         }
 
         return true;
     }
 
     isValid() {
-        return this.checkName()
+        try {
+            this.checkName()
             && this.checkContent()
             && this.checkCreated();
+        } catch (e) {
+            return false;
+        }
+
+        return true;
     }
 }

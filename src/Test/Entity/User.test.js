@@ -118,9 +118,7 @@ describe('User birthdate validation', () => {
             let user = new User(null, null, null, null, birthdate);
             expect(() => user.checkBirthdate()).toThrow(InvalidUserBirthdateException);
         });
-    });
 
-    describe('Birthdate too small', () => {
         test.each([
             [now.setFullYear(now.getFullYear() - 12)],
         ])('Testing [%s]', (birthdate) => {
