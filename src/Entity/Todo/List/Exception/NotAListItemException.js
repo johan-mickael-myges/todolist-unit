@@ -1,6 +1,6 @@
-const InvalidItemException = require('./InvalidListException');
+const InvalidListException = require('./InvalidListException');
 
-module.exports = class NotAListItemException extends InvalidItemException {
+module.exports = class NotAListItemException extends InvalidListException {
     constructor(message = 'Not a list item', item) {
         super(message);
         this.name = 'NotAListItemException';

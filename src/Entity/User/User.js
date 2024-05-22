@@ -67,11 +67,11 @@ class User extends IEntity {
     }
 
     checkEmail() {
-        if (!this._email) {
+        if (!this.email) {
             throw new InvalidUserEmailException();
         }
 
-        if (!this._email.match(/^([\w.%+-]+)@([\w-]+\.)+([\w]{2,})$/i)) {
+        if (!this.email.match(/^([\w.%+-]+)@([\w-]+\.)+([\w]{2,})$/i)) {
             throw new InvalidUserEmailException('Invalid email format');
         }
 
@@ -79,15 +79,15 @@ class User extends IEntity {
     }
 
     checkPassword() {
-        if (!this._password) {
+        if (!this.password) {
             throw new InvalidUserPasswordException('Password is required');
         }
 
-        if (this._password.length < 8 || this._password.length > 40) {
+        if (this.password.length < 8 || this.password.length > 40) {
             throw new InvalidUserPasswordException('Password must be between 8 and 40 characters');
         }
 
-        if (!this._password.match(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/)) {
+        if (!this.password.match(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/)) {
             throw new InvalidUserPasswordException('Password must contain at least one uppercase letter, one lowercase letter, one number and one special character');
         }
 
@@ -95,7 +95,7 @@ class User extends IEntity {
     }
 
     checkFirstname() {
-        if (!this._firstname || !this._firstname.trim()) {
+        if (!this.firstname || !this.firstname.trim()) {
             throw new InvalidUserFirstnameException('Firstname is required');
         }
 
@@ -103,7 +103,7 @@ class User extends IEntity {
     }
 
     checkLastname() {
-        if (!this._lastname || !this._lastname.trim()) {
+        if (!this.lastname || !this.lastname.trim()) {
             throw new InvalidUserLastnameException('Lastname is required');
         }
 
@@ -111,7 +111,7 @@ class User extends IEntity {
     }
 
     checkBirthdate() {
-        let birthdate = new Date(this._birthdate);
+        let birthdate = new Date(this.birthdate);
 
         if (birthdate.toString() === 'Invalid Date') {
             throw new InvalidUserBirthdateException('Invalid birthdate');

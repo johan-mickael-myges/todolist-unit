@@ -5,7 +5,11 @@ const InvalidListNameException = require("../List/Exception/InvalidListNameExcep
 const InvalidListItemException = require("../List/Exception/InvalidListItemException");
 const TooManyListItemsException = require("../List/Exception/TooManyListItemsException");
 const NotAListItemException = require("../List/Exception/NotAListItemException");
+const NotUniqueItemException = require("../List/Exception/NotUniqueItemException");
+
 module.exports = class List extends IEntity {
+    MAX_ITEM_COUNT = 10;
+
     constructor(
         name = '',
         items = []
@@ -31,6 +35,10 @@ module.exports = class List extends IEntity {
         this._items = value;
     }
 
+    findItemByName(name) {
+        return this.items.find(item => item.name === name);
+    }
+
     addItem(item) {
         if (!(item instanceof Item)) {
             throw new NotAListItemException('Invalid list item', item);
@@ -40,30 +48,55 @@ module.exports = class List extends IEntity {
             throw new InvalidListItemException('Invalid list item', item);
         }
 
-        this._items.push(item);
+        if (this.findItemByName(item.name)) {
+            throw new NotUniqueItemException(item);
+        }
+
+        this.items.push(item);
     }
 
     removeItem(item) {
-        this._items = this._items.filter(i => i !== item);
+        this.items = this.items.filter(i => i !== item);
     }
 
     clearItems() {
-        this._items = [];
+        this.items = [];
     }
 
     checkName() {
-        if (!this._name || !this._name.trim()) {
+        if (!this.name || !this.name.trim()) {
             throw new InvalidListNameException();
         }
+
+        return true;
+    }
+
+    checkNoDuplicateItems() {
+        for (let i = 0; i < this.items.length; i++) {
+            for (let j = i + 1; j < this.items.length; j++) {
+                if (this.items[i].name === this.items[j].name) {
+                    return false;
+                }
+            }
+        }
+
         return true;
     }
 
     checkItems() {
-        if (this._items.length > 10) {
+        if (this.items.length > this.MAX_ITEM_COUNT) {
             throw new TooManyListItemsException();
         }
 
-        this._items.forEach(item => item.isValid());
+        for (let i= 0; i < this.items.length; i++) {
+            if (!this.items[i].isValid()) {
+                throw new InvalidListItemException();
+            }
+        }
+
+        if (!this.checkNoDuplicateItems()) {
+            throw new NotUniqueItemException();
+        }
 
         return true;
     }
@@ -72,7 +105,7 @@ module.exports = class List extends IEntity {
         let isValid;
 
         try {
-            isValid = this.checkEmail() && this.checkItems();
+            isValid = this.checkName() && this.checkItems();
         } catch (error) {
             isValid = false;
         }

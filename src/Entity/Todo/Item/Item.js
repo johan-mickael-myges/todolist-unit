@@ -42,18 +42,18 @@ module.exports = class Item extends IEntity {
     }
 
     checkName() {
-        if (!this._name || !this._name.trim()) {
+        if (!this.name || !this.name.trim()) {
             throw new InvalidItemNameException();
         }
         return true;
     }
 
     checkContent() {
-        if (!this._content || !this._content.trim()) {
+        if (!this.content || !this.content.trim()) {
             throw new InvalidItemContentException();
         }
 
-        if (this._content.length > 1000) {
+        if (this.content.length > 1000) {
             throw new ItemContentTooLongException();
         }
 
@@ -61,11 +61,11 @@ module.exports = class Item extends IEntity {
     }
 
     checkCreated() {
-        if (!this._created) {
+        if (!this.created) {
             throw new InvalidItemCreatedException();
         }
 
-        const date = new Date(this._created);
+        const date = new Date(this.created);
         if (date.toString() === 'Invalid Date') {
             throw new InvalidItemCreatedException();
         }
