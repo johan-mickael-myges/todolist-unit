@@ -1,3 +1,5 @@
+const DateUtil = require('../../../Utils/Date');
+
 const IEntity = require('../../IEntity');
 
 const InvalidItemNameException = require('./Exception/InvalidItemNameException');
@@ -45,6 +47,7 @@ module.exports = class Item extends IEntity {
         if (!this.name || !this.name.trim()) {
             throw new InvalidItemNameException();
         }
+
         return true;
     }
 
@@ -71,6 +74,10 @@ module.exports = class Item extends IEntity {
         }
 
         return true;
+    }
+
+    diffCreatedDate(item) {
+        return DateUtil.diff(this.created, item.created);
     }
 
     isValid() {

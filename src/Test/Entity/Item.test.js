@@ -81,6 +81,21 @@ describe('Item created validation', () => {
     });
 });
 
+describe('Item created date diff', () => {
+    test.each([
+        [(new Date()).setHours(1), (new Date()).setHours(3), 120],
+        [(new Date()).setMinutes(33), (new Date()).setMinutes(3), 30],
+        [new Date(), new Date(), 0]
+    ])('Testing diff for %s - %s', (created1, created2, expected) => {
+        let item1 = new Item('item1', '...', created1);
+        let item2 = new Item('item2', '...', created2);
+
+        let diff = item1.diffCreatedDate(item2);
+
+        expect(diff).toBe(expected);
+    });
+});
+
 describe('Item entity validation', () => {
     describe('Invalid Item', () => {
         test.each([

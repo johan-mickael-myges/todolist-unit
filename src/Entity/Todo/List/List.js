@@ -9,6 +9,7 @@ const NotUniqueItemException = require("../List/Exception/NotUniqueItemException
 
 module.exports = class List extends IEntity {
     MAX_ITEM_COUNT = 10;
+    MAX_ITEM_CREATED_DIFF_MINUTES = 30;
 
     constructor(
         name = '',
